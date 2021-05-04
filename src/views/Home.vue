@@ -3,10 +3,10 @@
     <section class="hero is-medium is-dark mb-6">
         <div class="hero-body has-text-centered">
             <p class="title mb-6">
-                Welcome to Django Shop
+                Welcome to Djacket
             </p>
             <p class="subtitle">
-                The best online Shop in the world!
+                The best jacket store online
             </p>
         </div>
     </section>
@@ -16,27 +16,17 @@
           <h2 class="is-size-2 has-text-centered">Latest products</h2>
       </div>
 
-      <div class="column is-3"
-      v-for="product in latestProducts"
-      :key="product.id">
-
-      <div class="box">
-        <figure class="image mb-3">
-          <img :src="product.get_thumbnail" alt="">
-        </figure>
-
-        <h3 class="is-size-4">{{product.name}}</h3>
-        <p class="is-size-6 has-text-grey">${{product.price}}</p>
-
-        <router-link v-bind:to="product.get_absolute_url" class="button is-dark mt-4">View details</router-link>
-      </div>
-      </div>
+      <ProductCard 
+        v-for="product in latestProducts"
+        :key="product.id"
+        :product="product" />
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import ProductCard from '@/components/ProductCard'
 export default {
   name: 'Home',
   data() {
@@ -45,13 +35,15 @@ export default {
     }
   },
   components: {
+    ProductCard
   },
   mounted() {
     this.getLatestProducts()
-    document.title = 'Home | Django-Shop'
+    document.title = 'Home | Djackets'
   },
   methods: {
     async getLatestProducts() {
+      this.$store.commit('setIsLoading', true)
       await axios
         .get('/api/v1/latest-products/')
         .then(response => {
@@ -60,6 +52,7 @@ export default {
         .catch(error => {
           console.log(error)
         })
+      this.$store.commit('setIsLoading', false)
     }
   }
 }
